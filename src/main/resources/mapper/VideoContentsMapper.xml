@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yipage.leanmarketing.mapper.VideoContentsMapper">
+    <resultMap id="BaseResultMap" type="com.yipage.leanmarketing.model.VideoContents">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="url" jdbcType="VARCHAR" property="url"/>
+        <result column="chapter_id" jdbcType="INTEGER" property="chapterId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+
+    <select id="countToVideoContents" resultType="int">
+    SELECT COUNT(1)
+    FROM video_contents vc1 ,video_chapter vc2 , video v
+    where vc1.chapter_id = vc2.id and vc2.video_id = v.id
+  </select>
+
+    <select id="listPagerToVideoContents" resultType="map">
+        SELECT vc1.id,vc1.name,vc1.sort, vc1.chapter_id AS chapterId,vc1.url ,vc1.introduction,vc1.create_time AS
+        createTime ,vc1.update_time AS updateTime,vc1.img,vc2.name AS videoChapterName,v.title AS videoTitle
+        FROM video_contents vc1 ,video_chapter vc2 , video v
+        <where>
+            vc1.chapter_id = vc2.id and vc2.video_id = v.id
+            <if test="videoChapterName != null and videoChapterName !=''">
+                and vc2.name like concat("%",#{videoChapterName},"%")
+            </if>
+            <if test="videoName != null and videoName !=''">
+                and v.title like concat("%",#{videoName},"%")
+            </if>
+        </where>
+        ORDER BY v.id,vc2.sort,vc1.sort
+        LIMIT #{beginIndex},#{limit}
+    </select>
+
+
+</mapper>

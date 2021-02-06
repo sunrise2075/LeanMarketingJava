@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yipage.leanmarketing.mapper.AdministratorMapper">
+    <resultMap id="BaseResultMap" type="com.yipage.leanmarketing.model.Administrator">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="head_portrait" jdbcType="VARCHAR" property="headPortrait"/>
+        <result column="state" jdbcType="TINYINT" property="state"/>
+        <result column="mail" jdbcType="VARCHAR" property="mail"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="role_id" jdbcType="INTEGER" property="roleId"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="identity_id" jdbcType="INTEGER" property="identityId"/>
+        <result column="role_code" jdbcType="INTEGER" property="roleCode"/>
+        <result column="role_name" jdbcType="VARCHAR" property="roleName"/>
+        <result column="address" jdbcType="VARCHAR" property="address"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+
+    <select id="getAdministratorByUsernameAndPassword" resultMap="BaseResultMap">
+    SELECT * FROM administrator
+    WHERE username = #{username} AND  password = #{password} AND state =1
+  </select>
+
+</mapper>

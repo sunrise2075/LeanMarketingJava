@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yipage.leanmarketing.mapper.ProductMapper">
+    <resultMap id="BaseResultMap" type="com.yipage.leanmarketing.model.Product">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <id column="is_hide" jdbcType="INTEGER" property="isHide"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="cover_img" jdbcType="VARCHAR" property="coverImg"/>
+        <result column="recommend_img" jdbcType="VARCHAR" property="recommendImg"/>
+        <result column="price_normal" jdbcType="DECIMAL" property="priceNormal"/>
+        <result column="price_junior" jdbcType="DECIMAL" property="priceJunior"/>
+        <result column="price_mid" jdbcType="DECIMAL" property="priceMid"/>
+        <result column="price_high" jdbcType="DECIMAL" property="priceHigh"/>
+        <result column="author_name" jdbcType="VARCHAR" property="authorName"/>
+        <result column="author_img" jdbcType="VARCHAR" property="authorImg"/>
+        <result column="author_introduce" jdbcType="VARCHAR" property="authorIntroduce"/>
+        <result column="publishing_house" jdbcType="VARCHAR" property="publishingHouse"/>
+        <result column="page_number" jdbcType="INTEGER" property="pageNumber"/>
+        <result column="word_number" jdbcType="INTEGER" property="wordNumber"/>
+        <result column="suit" jdbcType="TINYINT" property="suit"/>
+        <result column="state" jdbcType="TINYINT" property="state"/>
+        <result column="sales_num" jdbcType="INTEGER" property="salesNum"/>
+        <result column="publish_time" jdbcType="VARCHAR" property="publishTime"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="description" jdbcType="LONGVARCHAR" property="description"/>
+    </resultMap>
+
+    <!--查询销售量前三的商品-->
+    <select id="orderBySalesNum" resultMap="BaseResultMap">
+
+    SELECT * FROM product
+    WHERE state =1 and is_hide =1
+    ORDER BY sales_num DESC
+    limit 3
+  </select>
+
+    <!--最新上架(三本)-->
+    <select id="latestUpProduct" resultMap="BaseResultMap">
+
+    SELECT * FROM product
+    WHERE state =1 and is_hide =1
+    ORDER BY create_time DESC
+    limit 3
+  </select>
+
+    <select id="query" resultMap="BaseResultMap">
+
+        SELECT * FROM product
+        <where>
+            state =1 and is_hide =1
+            <if test="categoryId!=null">
+                and category_id = #{categoryId}
+            </if>
+            <if test="isFree!=null">
+                and is_free = #{isFree}
+            </if>
+        </where>
+        ORDER BY update_time DESC
+        limit #{limit}
+    </select>
+
+
+</mapper>

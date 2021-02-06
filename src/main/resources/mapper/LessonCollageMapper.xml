@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yipage.leanmarketing.mapper.LessonCollageMapper">
+    <resultMap id="BaseResultMap" type="com.yipage.leanmarketing.model.LessonCollage">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="cover_img" jdbcType="VARCHAR" property="coverImg"/>
+        <result column="num" jdbcType="INTEGER" property="num"/>
+        <result column="price" jdbcType="DECIMAL" property="price"/>
+        <result column="province" jdbcType="VARCHAR" property="province"/>
+        <result column="city" jdbcType="VARCHAR" property="city"/>
+        <result column="area" jdbcType="VARCHAR" property="area"/>
+        <result column="begin_time" jdbcType="TIMESTAMP" property="beginTime"/>
+        <result column="end_time" jdbcType="TIMESTAMP" property="endTime"/>
+        <result column="is_provide_address" jdbcType="INTEGER" property="isProvideAddress"/>
+        <result column="address" jdbcType="VARCHAR" property="address"/>
+        <result column="days" jdbcType="INTEGER" property="days"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+</mapper>

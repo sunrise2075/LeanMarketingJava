@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yipage.leanmarketing.mapper.ConsumeRecordMapper">
+    <resultMap id="BaseResultMap" type="com.yipage.leanmarketing.model.ConsumeRecord">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="superior_id" jdbcType="INTEGER" property="superiorId"/>
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="user_grade" jdbcType="INTEGER" property="userGrade"/>
+        <result column="user_head_portrait" jdbcType="VARCHAR" property="userHeadPortrait"/>
+        <result column="order_number" jdbcType="VARCHAR" property="orderNumber"/>
+        <result column="address" jdbcType="VARCHAR" property="address"/>
+        <result column="type" jdbcType="INTEGER" property="type"/>
+        <result column="pay_money" jdbcType="DECIMAL" property="payMoney"/>
+        <result column="pay_time" jdbcType="TIMESTAMP" property="payTime"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+
+
+    <select id="getTotalRevenue" parameterType="string" resultType="decimal">
+        SELECT SUM(pay_money)
+        FROM consume_record c
+        <where>
+            <if test=" address != null and address!= '' ">
+                and c.address = #{address}
+            </if>
+        </where>
+    </select>
+
+    <select id="getTotalNumber" parameterType="string" resultType="int">
+        SELECT COUNT(1)
+        FROM (
+        SELECT user_id FROM consume_record
+        <where>
+            <if test="address!= null and address!= '' ">
+                and address = #{address}
+            </if>
+        </where>
+        GROUP BY user_id
+        )a
+    </select>
+
+    <select id="getListCount" resultType="Integer">
+        SELECT count(1) FROM consume_record
+        <where>
+            <if test="address!= null and address!= '' ">
+                and address = #{address}
+            </if>
+            <if test="type!= null">
+                and type = #{type}
+            </if>
+            <if test="year!= null and year!= '' ">
+                and YEAR(create_time) = #{year}
+            </if>
+            <if test="month!= null and month!= '' ">
+                and MONTH (create_time) = #{month}
+            </if>
+            <if test="day!= null and day!= '' ">
+                and DAY (create_time) = #{day}
+            </if>
+        </where>
+    </select>
+
+    <select id="getList" resultMap="BaseResultMap">
+        SELECT * FROM consume_record
+        <where>
+            <if test="address!= null and address!= '' ">
+                and address = #{address}
+            </if>
+            <if test="year!= null and year!= '' ">
+                and YEAR(create_time) = #{year}
+            </if>
+            <if test="type!= null">
+                and type = #{type}
+            </if>
+            <if test="month!= null and month!= '' ">
+                and MONTH (create_time) = #{month}
+            </if>
+            <if test="day!= null and day!= '' ">
+                and DAY (create_time) = #{day}
+            </if>
+        </where>
+        LIMIT #{beginIndex},#{limit}
+    </select>
+
+    <select id="getRevenue" resultType="decimal">
+        SELECT sum(pay_money) AS revenue FROM consume_record
+        <where>
+            <if test="address!= null and address!= '' ">
+                and address = #{address}
+            </if>
+            <if test="type!= null">
+                and type = #{type}
+            </if>
+            <if test="year!= null and year!= '' ">
+                and YEAR(create_time) = #{year}
+            </if>
+            <if test="month!= null and month!= '' ">
+                and MONTH (create_time) = #{month}
+            </if>
+            <if test="day!= null and day!= '' ">
+                and DAY (create_time) = #{day}
+            </if>
+        </where>
+    </select>
+
+    <select id="getNumber" resultType="int">
+        SELECT count(1) AS number FROM
+        (SELECT * FROM consume_record
+        <where>
+            <if test="address!= null and address!= '' ">
+                and address = #{address}
+            </if>
+            <if test="year!= null and year!= '' ">
+                and YEAR(create_time) = #{year}
+            </if>
+            <if test="month!= null and month!= '' ">
+                and MONTH (create_time) = #{month}
+            </if>
+            <if test="day!= null and day!= '' ">
+                and DAY (create_time) = #{day}
+            </if>
+            <if test="type!= null">
+                and type = #{type}
+            </if>
+        </where>
+        GROUP BY user_id
+        )a
+    </select>
+
+
+    <select id="dealerRevenueStreams" parameterType="int" resultType="decimal">
+       SELECT SUM(pay_money)
+       FROM consume_record c
+       WHERE  c.superior_id = #{superiorId} and c.type !=4
+  </select>
+
+
+    <select id="getListDealerRevenueCount" resultType="int">
+        SELECT count(1)
+        FROM consume_record c
+        <where>
+            c.superior_id = #{superiorId}
+            <if test="type!= null">
+                and c.type = #{type}
+            </if>
+            <if test="type == null">
+                and c.type in (1,2,3)
+            </if>
+            <if test="address!= null and address!= '' ">
+                and c.address = #{address}
+            </if>
+            <if test="year!= null and year!= '' ">
+                and YEAR(c.create_time) = #{year}
+            </if>
+            <if test="month!= null and month!= '' ">
+                and MONTH (c.create_time) = #{month}
+            </if>
+            <if test="day!= null and day!= '' ">
+                and DAY (c.create_time) = #{day}
+            </if>
+        </where>
+    </select>
+
+    <select id="getListDealerRevenue" resultMap="BaseResultMap">
+        SELECT * FROM consume_record c
+        <where>
+            c.superior_id = #{superiorId}
+            <if test="type!= null">
+                and c.type = #{type}
+            </if>
+            <if test="type == null">
+                and c.type in (1,2,3)
+            </if>
+            <if test="address!= null and address!= '' ">
+                and c.address = #{address}
+            </if>
+            <if test="year!= null and year!= '' ">
+                and YEAR(c.create_time) = #{year}
+            </if>
+            <if test="month!= null and month!= '' ">
+                and MONTH (c.create_time) = #{month}
+            </if>
+            <if test="day!= null and day!= '' ">
+                and DAY (c.create_time) = #{day}
+            </if>
+        </where>
+        ORDER BY c.id DESC
+    </select>
+
+
+    <select id="getDealerRevenue" resultType="decimal">
+        SELECT sum(pay_money) FROM consume_record c
+        <where>
+            c.superior_id = #{superiorId}
+            <if test="type!= null">
+                and c.type = #{type}
+            </if>
+            <if test="type == null">
+                and c.type in (1,2,3)
+            </if>
+            <if test="year!= null and year!= '' ">
+                and YEAR(c.create_time) = #{year}
+            </if>
+            <if test="month!= null and month!= '' ">
+                and MONTH (c.create_time) = #{month}
+            </if>
+            <if test="day!= null and day!= '' ">
+                and DAY (c.create_time) = #{day}
+            </if>
+        </where>
+    </select>
+
+    <select id="getDealerNumber" parameterType="int" resultType="int">
+        SELECT count(1) AS number FROM
+        (SELECT c.user_id FROM consume_record c
+        <where>
+            c.superior_id = #{superiorId}
+            <if test="year!= null and year!= '' ">
+                and YEAR(c.create_time) = #{year}
+            </if>
+            <if test="month!= null and month!= '' ">
+                and MONTH (c.create_time) = #{month}
+            </if>
+            <if test="day!= null and day!= '' ">
+                and DAY (c.create_time) = #{day}
+            </if>
+            <if test="type!= null">
+                and c.type = #{type}
+            </if>
+            <if test="type== null">
+                and c.type in (1,2,3)
+            </if>
+        </where>
+        GROUP BY user_id
+        )a
+    </select>
+
+
+    <select id="getConsumeRecordCount" resultType="int">
+        SELECT count(1) FROM consume_record c
+        <where>
+
+            <if test="type != null">
+                and c.type in (1,2,3)
+            </if>
+            <if test="superiorId != null">
+                and c.superior_id = #{superiorId}
+            </if>
+            <if test="address!= null and address!= '' ">
+                and c.address = #{address}
+            </if>
+        </where>
+    </select>
+
+    <select id="getConsumeRecordList" resultMap="BaseResultMap">
+        SELECT * FROM consume_record c
+        <where>
+
+            <if test="type != null">
+                and c.type in (1,2,3)
+            </if>
+            <if test="superiorId != null">
+                and c.superior_id = #{superiorId}
+            </if>
+            <if test="address!= null and address!= '' ">
+                and c.address = #{address}
+            </if>
+        </where>
+        ORDER BY c.id DESC
+        <if test="beginIndex !=null">
+            LIMIT #{beginIndex},#{limit}
+        </if>
+    </select>
+
+
+</mapper>

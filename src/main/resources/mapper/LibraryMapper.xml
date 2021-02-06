@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yipage.leanmarketing.mapper.LibraryMapper">
+    <resultMap id="BaseResultMap" type="com.yipage.leanmarketing.model.Library">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="file_type" jdbcType="VARCHAR" property="fileType"/>
+        <result column="file_size" jdbcType="INTEGER" property="fileSize"/>
+        <result column="is_free" jdbcType="INTEGER" property="isFree"/>
+        <result column="is_hide" jdbcType="INTEGER" property="isHide"/>
+        <result column="url" jdbcType="VARCHAR" property="url"/>
+        <result column="introduce" jdbcType="VARCHAR" property="introduce"/>
+        <result column="codes" jdbcType="VARCHAR" property="codes"/>
+        <result column="category_id" jdbcType="INTEGER" property="categoryId"/>
+        <result column="introduce" jdbcType="VARCHAR" property="introduce"/>
+        <result column="price" jdbcType="DECIMAL" property="price"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="content" jdbcType="LONGVARCHAR" property="content"/>
+        <result column="labels" jdbcType="VARCHAR" property="labels"/>
+        <result column="librarys" jdbcType="VARCHAR" property="librarys"/>
+    </resultMap>
+
+    <select id="findByKeyWord" resultMap="BaseResultMap">
+        SELECT * FROM library
+        <where>
+            <if test="title != null and title != ''">
+                and title LIKE concat('%',#{title},'%')
+            </if>
+            <if test="categoryId != null">
+                AND categoryId = #{categoryId}
+            </if>
+            <if test="fileType != null and fileType != ''">
+                AND file_type = #{fileType}
+            </if>
+        </where>
+        ORDER BY create_time
+    </select>
+
+
+    <select id="recommendedLibrarysCount" resultType="long">
+        SELECT
+        count(*)
+        FROM
+        (
+        SELECT
+        count(*)
+        FROM
+        label_record lr,
+        library l
+        WHERE
+        lr.type_id = l.id
+        <if test="isFree!=null">
+            and l.is_free = #{isFree,jdbcType=INTEGER}
+        </if>
+
+        AND lr.type = 2
+        GROUP BY
+        l.id
+        ) a
+    </select>
+
+    <select id="recommendedLibrarys" resultMap="BaseResultMap">
+        SELECT l.*
+        FROM label_record lr,
+             library l
+        WHERE lr.type_id = l.id
+          AND lr.type = 2
+         <if test="isFree!=null">
+             and l.is_free = #{isFree,jdbcType=INTEGER}
+         </if>
+        GROUP BY l.id
+        ORDER BY lr.count DESC
+        LIMIT #{startIndex},#{limit}
+    </select>
+
+    <select id="getByLabels" resultMap="BaseResultMap">
+        select * from library
+        WHERE
+        <foreach collection="array" item="label" separator="or">
+            FIND_IN_SET(#{label},labels)
+        </foreach>
+    </select>
+
+    <select id="getByDownLoadRecordCount" resultType="long">
+        SELECT count(*)
+        FROM (
+                     SELECT l.*,
+                            count(ldr.library_id) libraryCount
+                     FROM library_download_record ldr,
+                          library l
+                     where ldr.library_id = l.id
+                       and l.file_type = #{fileType}
+                         <if test="isFree!=null">
+                             and l.is_free = #{isFree,jdbcType=INTEGER}
+                         </if>
+                     GROUP BY ldr.library_id
+                     ) a
+    </select>
+
+    <select id="getByDownLoadRecord" resultMap="BaseResultMap">
+        SELECT l.*,
+               count(ldr.library_id) libraryCount
+        FROM library_download_record ldr,
+             library l
+        where ldr.library_id = l.id
+          and l.file_type = #{fileType}
+            <if test="isFree!=null">
+                and l.is_free = #{isFree,jdbcType=INTEGER}
+            </if>
+        GROUP BY ldr.library_id
+        order by libraryCount desc
+        LIMIT #{startIndex},#{limit}
+    </select>
+
+
+    <select id="getByLabel" resultMap="BaseResultMap">
+        select *
+        from library
+        WHERE FIND_IN_SET(#{label}, labels)
+    </select>
+</mapper>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yipage.leanmarketing.mapper.UserMapper">
+    <resultMap id="BaseResultMap" type="com.yipage.leanmarketing.model.User">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <id column="is_bind" jdbcType="INTEGER" property="isBind"/>
+        <result column="wxid" jdbcType="VARCHAR" property="wxid"/>
+        <result column="nickname" jdbcType="VARCHAR" property="nickname"/>
+        <result column="head_portrait" jdbcType="VARCHAR" property="headPortrait"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="member_level" jdbcType="TINYINT" property="memberLevel"/>
+        <result column="registered_address" jdbcType="VARCHAR" property="registeredAddress"/>
+        <result column="expiration_time" jdbcType="TIMESTAMP" property="expirationTime"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="company_name" jdbcType="VARCHAR" property="companyName"/>
+    </resultMap>
+
+
+    <select id="exportExcel" resultMap="BaseResultMap">
+
+        SELECT * FROM user
+        <where>
+            <if test="identity!=null and identity !=''">
+                and identity = #{identity}
+            </if>
+            <if test="superiorId!=null and superiorId !=''">
+                and superior_id = #{superiorId}
+            </if>
+            <if test="memberLevel!=null and memberLevel !=''">
+                and member_level = #{memberLevel}
+            </if>
+            <if test="address!=null and address !=''">
+                and address like CONCAT('%',#{address},'%')
+            </if>
+        </where>
+    </select>
+
+    <update id="updateUserDelete" parameterType="string">
+     UPDATE user SET is_delete = 1,is_bind =  WHERE id in (#{ids})
+  </update>
+
+</mapper>

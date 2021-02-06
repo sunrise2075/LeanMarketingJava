@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yipage.leanmarketing.mapper.ExamSubjectMapper">
+    <resultMap id="BaseResultMap" type="com.yipage.leanmarketing.model.ExamSubject">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="codes" jdbcType="VARCHAR" property="codes"/>
+        <result column="price" jdbcType="DECIMAL" property="price"/>
+        <result column="category_id" jdbcType="INTEGER" property="categoryId"/>
+        <result column="is_hide" jdbcType="INTEGER" property="isHide"/>
+        <result column="question_num" jdbcType="INTEGER" property="questionNum"/>
+        <result column="is_free" jdbcType="INTEGER" property="isFree"/>
+        <result column="exam_duration" jdbcType="INTEGER" property="examDuration"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="labels" jdbcType="VARCHAR" property="labels"/>
+        <result column="exams" jdbcType="VARCHAR" property="exams"/>
+        <result column="abilitys" jdbcType="VARCHAR" property="abilitys"/>
+        <result column="ability_names" jdbcType="VARCHAR" property="abilityNames"/>
+    </resultMap>
+
+
+    <select id="getRecommendExamSubject" resultMap="BaseResultMap">
+        SELECT * FROM exam_subject
+        <where>
+            <if test="categoryId!=null">
+                AND category_id = #{categoryId}
+            </if>
+            <if test="subjectId!=null">
+                AND id !=#{subjectId}
+            </if>
+        </where>
+        ORDER BY create_time
+        LIMIT #{limit}
+    </select>
+
+    <select id="recommendedExamsCount" resultType="long">
+        SELECT
+            count(*)
+        FROM
+            (
+              SELECT
+                count(*)
+              FROM
+                label_record lr,
+                exam_subject es
+              WHERE
+                lr.type_id = es.id
+              AND lr.type = 3
+              GROUP BY
+                es.id
+            ) a
+  </select>
+
+    <select id="recommendedExams" resultMap="BaseResultMap">
+        SELECT
+            es.*
+        FROM
+            label_record lr,
+            exam_subject es
+        WHERE
+            lr.type_id = es.id
+            AND lr.type = 3
+        GROUP BY
+            es.id
+        ORDER BY
+            lr.count DESC
+        LIMIT #{startIndex},#{limit}
+  </select>
+
+    <select id="getByLabels" resultMap="BaseResultMap">
+        select * from exam_subject
+        WHERE
+        <foreach collection="array" item="label" separator="or">
+            FIND_IN_SET(#{label},labels)
+        </foreach>
+    </select>
+
+    <select id="getBySorceRecordCount" resultType="long">
+        SELECT
+            count(*)
+        FROM
+        (
+        SELECT
+            es2.*,
+            count(es1.subject_id) subjectCount
+        FROM
+            exam_score es1,
+            exam_subject es2
+        where es1.subject_id = es2.id
+        GROUP BY es1.subject_id
+        ) a
+    </select>
+
+    <select id="getBySorceRecord" resultMap="BaseResultMap">
+        SELECT
+            es2.*,
+            count(es1.subject_id) subjectCount
+        FROM
+            exam_score es1,
+            exam_subject es2
+        where es1.subject_id = es2.id
+        GROUP BY es1.subject_id
+        order by subjectCount desc
+        LIMIT #{startIndex},#{limit}
+    </select>
+
+    <select id="getByLabel" resultMap="BaseResultMap">
+        select * from exam_subject
+        WHERE FIND_IN_SET(#{label},labels)
+    </select>
+
+
+</mapper>

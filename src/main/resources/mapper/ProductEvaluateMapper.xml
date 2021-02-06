@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yipage.leanmarketing.mapper.ProductEvaluateMapper">
+    <resultMap id="BaseResultMap" type="com.yipage.leanmarketing.model.ProductEvaluate">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="product_id" jdbcType="INTEGER" property="productId"/>
+        <result column="star_num" jdbcType="INTEGER" property="starNum"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="evaluate_img" jdbcType="VARCHAR" property="evaluateImg"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+
+
+    <select id="orderByStarNumLimit2" resultType="map">
+
+    SELECT pe.id,pe.product_id as productId,pe.star_num as starNum,pe.description,pe.user_id as userId,
+    pe.evaluate_img as evaluateImg,pe.create_time AS  createTime,pe.update_time as updateTime, u.nickname ,
+    u.head_portrait AS  headPortrait
+    FROM product_evaluate as pe,user as u
+    where pe.user_id =u.id   and product_id = #{productId}
+    ORDER BY star_num DESC
+    LIMIT 2
+  </select>
+</mapper>

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yipage.leanmarketing.mapper.VideoMapper">
+    <resultMap id="BaseResultMap" type="com.yipage.leanmarketing.model.Video">
+
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="author_name" jdbcType="VARCHAR" property="authorName"/>
+        <result column="author_img" jdbcType="VARCHAR" property="authorImg"/>
+        <result column="author_introduce" jdbcType="VARCHAR" property="authorIntroduce"/>
+        <result column="codes" jdbcType="VARCHAR" property="codes"/>
+        <result column="is_free" jdbcType="TINYINT" property="isFree"/>
+        <result column="is_hide" jdbcType="TINYINT" property="isHide"/>
+        <result column="is_share" jdbcType="TINYINT" property="isShare"/>
+        <!--<result column="is_delete" jdbcType="TINYINT" property="isDelete" />-->
+        <result column="sales_num" jdbcType="INTEGER" property="salesNum"/>
+        <result column="price" jdbcType="DECIMAL" property="price"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+        <result column="video_url" jdbcType="VARCHAR" property="videoUrl"/>
+        <result column="cover_img" jdbcType="VARCHAR" property="coverImg"/>
+        <result column="category_id" jdbcType="INTEGER" property="categoryId"/>
+        <result column="category_name" jdbcType="VARCHAR" property="categoryName"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="labels" jdbcType="VARCHAR" property="labels"/>
+        <result column="videos" jdbcType="VARCHAR" property="videos"/>
+    </resultMap>
+
+
+    <select id="orderBySalesNum" resultMap="BaseResultMap">
+       SELECT * FROM video
+       WHERE is_hide = 1
+       ORDER BY sales_num DESC
+       limit 10
+  </select>
+
+    <select id="findVideo" resultMap="BaseResultMap">
+        SELECT * FROM video
+        <where>
+            <if test="categoryId!=null">
+                and category_id = #{categoryId}
+            </if>
+            <if test="isFree!=null">
+                and is_free = #{isFree}
+            </if>
+        </where>
+        ORDER BY create_time DESC
+        limit #{limit}
+    </select>
+
+
+    <select id="recommendedVideosCount" resultType="long">
+        SELECT
+            count(*)
+        FROM
+            (
+                SELECT
+                    v.*
+                FROM
+                    label_record lr,
+                    video v
+
+                WHERE
+                    lr.type_id = v.id
+                    AND lr.type = 1
+                    and v.is_free = #{isFree}
+                GROUP BY
+                    v.id
+            ) a
+  </select>
+
+    <select id="recommendedVideos" resultMap="BaseResultMap">
+        SELECT
+            v.*
+        FROM
+            label_record lr,
+            video v
+
+        WHERE
+            lr.type_id = v.id
+            AND lr.type = 1
+            and v.is_free = #{isFree}
+        GROUP BY
+            v.id
+        ORDER BY
+            lr.count DESC
+        LIMIT #{startIndex},#{limit}
+    </select>
+
+
+    <select id="getByLabels" resultMap="BaseResultMap">
+        select * from video
+        WHERE
+        <foreach collection="array" item="label" separator="or">
+            FIND_IN_SET(#{label},labels)
+        </foreach>
+    </select>
+
+
+    <select id="getByWatchRecordCount" resultType="long">
+        SELECT
+            count(*)
+        FROM
+            (
+            SELECT
+                v.*,
+                count(wr.video_id) videoCount
+            FROM
+                watch_record wr,
+                video v
+            where wr.video_id = v.id
+                and v.is_free = #{isFree}
+            GROUP BY wr.video_id
+            ) a
+    </select>
+
+    <select id="getByWatchRecord" resultMap="BaseResultMap">
+        SELECT
+            v.*,
+            count(wr.video_id) videoCount
+        FROM
+            watch_record wr,
+            video v
+        where wr.video_id = v.id
+            and v.is_free = #{isFree}
+        GROUP BY wr.video_id
+        order by videoCount desc
+        LIMIT #{startIndex},#{limit}
+    </select>
+
+    <select id="getByLabel" resultMap="BaseResultMap">
+        select * from video
+        WHERE FIND_IN_SET(#{label},labels)
+    </select>
+
+
+</mapper>

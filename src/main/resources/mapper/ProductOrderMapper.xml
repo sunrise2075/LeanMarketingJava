@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yipage.leanmarketing.mapper.ProductOrderMapper">
+    <resultMap id="BaseResultMap" type="com.yipage.leanmarketing.model.ProductOrder">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="product_id" jdbcType="INTEGER" property="productId"/>
+        <result column="product_name" jdbcType="VARCHAR" property="productName"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="payment" jdbcType="VARCHAR" property="payment"/>
+        <result column="pay_number" jdbcType="VARCHAR" property="payNumber"/>
+        <result column="pay_state" jdbcType="TINYINT" property="payState"/>
+        <result column="pay_time" jdbcType="TIMESTAMP" property="payTime"/>
+        <result column="pay_money" jdbcType="DECIMAL" property="payMoney"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+
+    <select id="selectAllOrderStateNum" resultType="map">
+        SELECT a.totalNum,b.needPayNum,c.needSendNum,d.needReceiveNum,g.needEvaluateNum,e.successNum,f.cancelNum
+        FROM (select count(1) as totalNum from product_order
+        <where>
+            <if test="openid!=null and openid !=''">
+                and openid = #{openid}
+            </if>
+        </where>
+        )a,
+        (select count(1) as needPayNum from product_order
+        <where>
+            pay_state = 1
+            <if test="openid!=null and openid !=''">
+                and openid = #{openid}
+            </if>
+        </where>
+        )b,
+        (select count(1) as needSendNum from product_order
+        <where>
+            pay_state = 2
+            <if test="openid!=null and openid !=''">
+                and openid = #{openid}
+            </if>
+        </where>
+        )c,
+        (select count(1) as needReceiveNum from product_order
+        <where>
+            pay_state = 3
+            <if test="openid!=null and openid !=''">
+                and openid = #{openid}
+            </if>
+        </where>
+        )d,
+        (select count(1) as needEvaluateNum from product_order
+        <where>
+            pay_state = 4
+            <if test="openid!=null and openid !=''">
+                and openid = #{openid}
+            </if>
+        </where>
+        )g,
+        (select count(1) as successNum from product_order
+        <where>
+            pay_state = 5
+            <if test="openid!=null and openid !=''">
+                and openid = #{openid}
+            </if>
+        </where>
+        )e,
+        (select count(1) as cancelNum from product_order
+        <where>
+            pay_state = 6
+            <if test="openid!=null and openid !=''">
+                and openid = #{openid}
+            </if>
+        </where>
+        )f
+    </select>
+
+    <select id="count" resultType="int">
+        SELECT COUNT(1) FROM
+        user AS u , product_order AS po , product AS p
+        <where>
+            po.user_id = u.id and po.product_id = p.id
+            <if test="payState!=null">
+                AND po.pay_state = #{payState}
+            </if>
+            <if test="startTime!=null and startTime!=''">
+                AND #{startTime} &gt; po.update_time
+            </if>
+            <if test="endTime!=null and endTime!=''">
+                AND #{endTime} &lt; po.update_time
+            </if>
+            <if test="payNumber!=null and payNumber!=''">
+                AND po.pay_number like concat('%',#{payNumber},'%')
+            </if>
+            <if test="userName!=null and userName!=''">
+                AND u.nickname like concat('%',#{userName},'%')
+            </if>
+            <if test="productName!=null and productName!=''">
+                AND p.name like concat('%',#{productName},'%')
+            </if>
+            <if test="openid!=null and openid!=''">
+                AND u.wxid =#{openid}
+            </if>
+        </where>
+    </select>
+
+    <!--<select id="listPager" resultType="map">-->
+    <!--SELECT-->
+    <!--po.id,po.pay_number AS payNumber,po.product_num AS productNum,po.payment,po.pay_state AS payState-->
+    <!--,po.pay_money-->
+    <!--AS payMoney, po.pay_time AS payTime,po.logistics_company as logisticsCompany,po.courier_number as courierNumber,-->
+    <!--po.send_time as sendTime,po.evaluate_time as evaluateTime,-->
+    <!--po.create_time AS createTime,po.update_time AS updateTime,po.receive_time AS receiveTime,po.auto_receive_time AS-->
+    <!--autoReceiveTime,po.receiver,po.receiver_address as receiverAddress,po.receiver_phone as receiverPhone,-->
+    <!--u.nickname AS userName,p.name AS productName ,p.cover_img AS productImg,p.price AS productPrice,p.id AS-->
+    <!--productId FROM-->
+    <!--user AS u , product_order AS po , product AS p-->
+    <!--<where>-->
+    <!--po.user_id = u.id and po.product_id = p.id-->
+    <!--<if test="payState!=null">-->
+    <!--AND po.pay_state = #{payState}-->
+    <!--</if>-->
+    <!--<if test="startTime!=null and startTime!=''">-->
+    <!--AND #{startTime} &lt; po.update_time-->
+    <!--</if>-->
+    <!--<if test="endTime!=null and endTime!=''">-->
+    <!--AND #{endTime} > po.update_time-->
+    <!--</if>-->
+    <!--<if test="payNumber!=null and payNumber!=''">-->
+    <!--AND po.pay_number like concat('%',#{payNumber},'%')-->
+    <!--</if>-->
+    <!--<if test="userName!=null and userName!=''">-->
+    <!--AND u.nickname like concat('%',#{userName},'%')-->
+    <!--</if>-->
+    <!--<if test="productName!=null and productName!=''">-->
+    <!--AND p.name like concat('%',#{productName},'%')-->
+    <!--</if>-->
+    <!--<if test="openid!=null and openid!=''">-->
+    <!--AND u.wxid =#{openid}-->
+    <!--</if>-->
+    <!--</where>-->
+    <!--ORDER BY po.create_time DESC-->
+    <!--LIMIT #{beginIndex},#{limit}-->
+    <!--</select>-->
+
+    <select id="listPager" resultType="map">
+        SELECT
+        po.id,
+        po.pay_number AS payNumber,
+        po.product_num AS productNum,
+        po.payment,
+        po.pay_state AS payState,
+        po.pay_money AS payMoney,
+        po.pay_time AS payTime,
+        po.logistics_company AS logisticsCompany,
+        po.courier_number AS courierNumber,
+        po.send_time AS sendTime,
+        po.evaluate_time AS evaluateTime,
+        po.create_time AS createTime,
+        po.update_time AS updateTime,
+        po.receive_time AS receiveTime,
+        po.auto_receive_time AS autoReceiveTime,
+        po.receiver,
+        po.receiver_address AS receiverAddress,
+        po.receiver_phone AS receiverPhone,
+        u.nickname AS userName,
+        p.name AS productName,
+        p.cover_img AS productImg,
+        p.price AS productPrice,
+        p.id AS productId
+        FROM
+        user AS u,
+        product_order AS po,
+        product AS p
+        <where>
+            po.user_id = u.id and po.product_id = p.id
+            <if test="payState!=null">
+                AND po.pay_state = #{payState}
+            </if>
+            <if test="startTime!=null and startTime!=''">
+                AND #{startTime} &lt; po.update_time
+            </if>
+            <if test="endTime!=null and endTime!=''">
+                AND #{endTime} > po.update_time
+            </if>
+            <if test="payNumber!=null and payNumber!=''">
+                AND po.pay_number like concat('%',#{payNumber},'%')
+            </if>
+            <if test="userName!=null and userName!=''">
+                AND u.nickname like concat('%',#{userName},'%')
+            </if>
+            <if test="productName!=null and productName!=''">
+                AND p.name like concat('%',#{productName},'%')
+            </if>
+            <if test="openid!=null and openid!=''">
+                AND u.wxid =#{openid}
+            </if>
+        </where>
+        ORDER BY po.create_time DESC
+        LIMIT #{beginIndex},#{limit}
+    </select>
+
+    <select id="exportExcel" resultType="map">
+        SELECT po.pay_number AS payNumber,po.product_num AS productNum,po.payment,po.pay_state AS payState ,po.pay_money
+        AS payMoney, po.pay_time AS payTime,
+        po.create_time AS createTime,po.update_time AS updateTime,
+        u.nickname AS userName,p.name AS productName ,p.cover_img AS productImg,p.price AS productPrice FROM
+        user AS u , product_order AS po , product AS p
+        <where>
+            po.user_id = u.id and po.product_id = p.id
+            <if test="payState!=null">
+                AND po.pay_state = #{payState}
+            </if>
+            <if test="startTime!=null and startTime!=''">
+                AND #{startTime} &gt; po.update_time
+            </if>
+            <if test="endTime!=null and endTime!=''">
+                AND #{endTime} &lt; po.update_time
+            </if>
+            <if test="payNumber!=null and payNumber!=''">
+                AND po.pay_number like concat('%',#{payNumber},'%')
+            </if>
+            <if test="userName!=null and userName!=''">
+                AND u.nickname like concat('%',#{userName},'%')
+            </if>
+            <if test="productName!=null and productName!=''">
+                AND p.name like concat('%',#{productName},'%')
+            </if>
+        </where>
+    </select>
+</mapper>

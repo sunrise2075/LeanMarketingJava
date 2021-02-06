@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yipage.leanmarketing.mapper.VideoChapterMapper">
+    <resultMap id="BaseResultMap" type="com.yipage.leanmarketing.model.VideoChapter">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="video_id" jdbcType="INTEGER" property="videoId"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+
+    <select id="countToVideoChapter" resultType="int">
+        SELECT COUNT(1)
+        FROM video_chapter vc LEFT JOIN video v ON vc.video_id = v.id
+        <where>
+            <if test="videoId != null">
+                and v.id = #{videoId}
+            </if>
+            <if test="videoChapterName != null and videoChapterName !=''">
+                and vc.name like concat("%",#{videoChapterName},"%")
+            </if>
+            <if test="videoName != null and videoName !=''">
+                and v.title like concat("%",#{videoName},"%")
+            </if>
+        </where>
+    </select>
+
+    <select id="listPagerToVideoChapter" resultType="map">
+        SELECT vc.id,vc.name,vc.is_hide AS isHide ,vc.sort,vc.video_id AS videoId,vc.create_time AS createTime
+        ,vc.update_time AS updateTime,v.title AS videoName
+        FROM video_chapter vc LEFT JOIN video v ON vc.video_id = v.id
+        <where>
+            <if test="videoId != null">
+                and v.id = #{videoId}
+            </if>
+            <if test="videoChapterName != null and videoChapterName !=''">
+                and vc.name like concat("%",#{videoChapterName},"%")
+            </if>
+            <if test="videoName != null and videoName !=''">
+                and v.title like concat("%",#{videoName},"%")
+            </if>
+        </where>
+        ORDER BY v.id,vc.sort
+        LIMIT #{beginIndex},#{limit}
+    </select>
+</mapper>

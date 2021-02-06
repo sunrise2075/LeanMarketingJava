@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yipage.leanmarketing.mapper.LessonCollageRecordMapper">
+    <resultMap id="BaseResultMap" type="com.yipage.leanmarketing.model.LessonCollageRecord">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="lesson_id" jdbcType="INTEGER" property="lessonId"/>
+        <result column="lesson_name" jdbcType="VARCHAR" property="lessonName"/>
+        <result column="lesson_title" jdbcType="VARCHAR" property="lessonTitle"/>
+        <result column="price" jdbcType="DECIMAL" property="price"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="user_img" jdbcType="VARCHAR" property="userImg"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+</mapper>

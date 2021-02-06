@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yipage.leanmarketing.mapper.EmployeeMapper">
+    <resultMap id="BaseResultMap" type="com.yipage.leanmarketing.model.Employee">
+        <!--
+          WARNING - @mbg.generated
+        -->
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="identity" jdbcType="INTEGER" property="identity"/>
+        <result column="head_portrait" jdbcType="VARCHAR" property="headPortrait"/>
+        <result column="phone" jdbcType="VARCHAR" property="phone"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+
+    <select id="countToEmployee" resultType="int">
+        SELECT COUNT(1) FROM employee e LEFT JOIN user u ON e.user_id = u.id
+        <where>
+            <if test="userId != null">
+                and e.user_id = #{userId}
+            </if>
+            <if test="companyName != null and companyName !=''">
+                and u.company_name like concat("%",#{companyName},"%")
+            </if>
+        </where>
+    </select>
+
+    <select id="listPagerToEmployee" resultType="map">
+        SELECT e.id ,e.name,e.head_portrait AS headPortrait,e.identity,e.state,e.phone,
+        e.create_time AS createTime ,e.update_time AS updateTime,u.company_name AS companyName
+        FROM employee e LEFT JOIN user u ON e.user_id = u.id
+        <where>
+            <if test="userId != null">
+                and e.user_id = #{userId}
+            </if>
+            <if test="companyName != null and companyName !=''">
+                and u.company_name like concat("%",#{companyName},"%")
+            </if>
+        </where>
+        ORDER BY e.update_time
+        LIMIT #{beginIndex},#{limit}
+    </select>
+</mapper>
