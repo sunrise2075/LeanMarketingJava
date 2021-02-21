@@ -72,6 +72,7 @@
          <if test="isFree!=null">
              and l.is_free = #{isFree,jdbcType=INTEGER}
          </if>
+
         GROUP BY l.id
         ORDER BY lr.count DESC
         LIMIT #{startIndex},#{limit}

@@ -159,7 +159,11 @@ public class LibraryController {
         if (StringUtils.isNotEmpty(fileType)) {
             criteria.andCondition("file_type = '" + fileType + "'");
         }
-        if (isFree != null) {
+
+        //未登录用户只查询免费文档
+        if (StringUtils.isEmpty(openid)){
+            criteria.andCondition("is_free =" + 1);
+        }else if (isFree != null) {
             criteria.andCondition("is_free =" + isFree);
         }
         if (categoryId != null) {
