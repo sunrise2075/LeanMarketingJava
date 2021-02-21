@@ -321,7 +321,7 @@ public class VideoController {
                 map.put("evaluateNum", evaluateNum);
 
                 if (user != null) {
-                    if (video.getIsFree() == Video.IS_FREE) {
+                    if (video.getIsFree().equals(Video.IS_FREE)) {
                         map.put("isBuy", 1);
                     } else {
                         //查看购买数量
@@ -354,7 +354,6 @@ public class VideoController {
                                         menberLevel = 1;
                                     }
                                     if (video.getCodes().contains(menberLevel + "")) {
-                                        map.put("isFree", Library.IS_FREE);
                                         map.put("isBuy", 1);
                                     } else {
 
@@ -396,7 +395,7 @@ public class VideoController {
         Map<String, Object> resMap = new HashMap<>();
         //查用户身份
         User user = null;
-        if (openid != null) {
+        if (StringUtils.isNotEmpty(openid)) {
             user = userService.findBy("wxid", openid);
             //黑名单
             Black black = blackService.findBy("phone", user.getPhone());
@@ -440,12 +439,12 @@ public class VideoController {
         resMap.put("freeVideoList", list2);
 
         List<Map<String, Object>> list3;
-        if (user.getIsBind() == User.IS_BIND_PHONE) {
-            list3 = Collections.emptyList();
-        }else {
+        if (user != null && user.getIsBind().equals(User.IS_BIND_PHONE)) {
             //精选收费视频
             List<Video> chargeVideoList = videoService.findVideo(categoryId, Video.NO_FREE, Video.IS_SHOW, limit);
             list3 = packageVideo(chargeVideoList, user);
+        } else {
+            list3 = Collections.emptyList();
         }
         resMap.put("chargeVideoList", list3);
 
@@ -497,8 +496,9 @@ public class VideoController {
                                  @RequestParam(value = "isFree", required = false) Integer isFree) {
 
         Map<String, Object> map = videoService.recommendedVideos(page, limit, userId, isFree);
-        packageVideo((List<Video>) map.get("data"), userService.findById(userId));
-        List<Map<String, Object>> list = packageVideo((List<Video>) map.get("data"), userService.findById(userId));
+        User user = userService.findById(userId);
+        List<Video> videos = (List<Video>) map.get("data");
+        List<Map<String, Object>> list = packageVideo(videos, user);
         map.put("data", list);
         return map;
     }

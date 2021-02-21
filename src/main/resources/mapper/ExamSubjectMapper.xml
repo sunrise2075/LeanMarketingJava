@@ -39,37 +39,35 @@
 
     <select id="recommendedExamsCount" resultType="long">
         SELECT
-            count(*)
+        count(*)
         FROM
-            (
-              SELECT
-                count(*)
-              FROM
-                label_record lr,
-                exam_subject es
-              WHERE
-                lr.type_id = es.id
-              AND lr.type = 3
-              GROUP BY
-                es.id
-            ) a
-  </select>
+        (
+        SELECT
+        count(*)
+        FROM
+        label_record lr,
+        exam_subject es
+        WHERE
+        lr.type_id = es.id
+        <if test="userId == null">
+        and es.is_free=1
+        </if>
+        AND lr.type = 3
+        GROUP BY
+        es.id
+        ) a
+    </select>
 
     <select id="recommendedExams" resultMap="BaseResultMap">
-        SELECT
-            es.*
-        FROM
-            label_record lr,
-            exam_subject es
-        WHERE
-            lr.type_id = es.id
-            AND lr.type = 3
-        GROUP BY
-            es.id
-        ORDER BY
-            lr.count DESC
+        SELECT es.*
+        FROM label_record lr,
+             exam_subject es
+        WHERE lr.type_id = es.id
+          AND lr.type = 3
+        GROUP BY es.id
+        ORDER BY lr.count DESC
         LIMIT #{startIndex},#{limit}
-  </select>
+    </select>
 
     <select id="getByLabels" resultMap="BaseResultMap">
         select * from exam_subject
@@ -80,37 +78,38 @@
     </select>
 
     <select id="getBySorceRecordCount" resultType="long">
-        SELECT
-            count(*)
-        FROM
-        (
-        SELECT
-            es2.*,
-            count(es1.subject_id) subjectCount
-        FROM
-            exam_score es1,
-            exam_subject es2
-        where es1.subject_id = es2.id
-        GROUP BY es1.subject_id
-        ) a
+        SELECT count(*)
+        FROM (
+                 SELECT es2.*,
+                        count(es1.subject_id) subjectCount
+                 FROM exam_score es1,
+                      exam_subject es2
+                 where es1.subject_id = es2.id
+                 <if test="userId == null">
+                     and es2.is_free =1
+                 </if>
+                 GROUP BY es1.subject_id
+             ) a
     </select>
 
     <select id="getBySorceRecord" resultMap="BaseResultMap">
-        SELECT
-            es2.*,
-            count(es1.subject_id) subjectCount
-        FROM
-            exam_score es1,
-            exam_subject es2
+        SELECT es2.*,
+               count(es1.subject_id) subjectCount
+        FROM exam_score es1,
+             exam_subject es2
         where es1.subject_id = es2.id
+        <if test="userId == null">
+            and es2.is_free = 1
+        </if>
         GROUP BY es1.subject_id
         order by subjectCount desc
         LIMIT #{startIndex},#{limit}
     </select>
 
     <select id="getByLabel" resultMap="BaseResultMap">
-        select * from exam_subject
-        WHERE FIND_IN_SET(#{label},labels)
+        select *
+        from exam_subject
+        WHERE FIND_IN_SET(#{label}, labels)
     </select>
 
 

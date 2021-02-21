@@ -95,9 +95,9 @@ public class ExamSubjectController {
         }
 
         //用户没有绑定手机号码，只返回免费的考试
-        if (user.getIsBind() != User.IS_BIND_PHONE) {
+        if (user == null || !user.getIsBind().equals(User.IS_BIND_PHONE)) {
             criteria.andCondition("is_free =" + 1);
-        }else if (isFree != null) {
+        } else if (isFree != null) {
             criteria.andCondition("is_free =" + isFree);
         }
         if (categoryId != null) {
@@ -209,7 +209,6 @@ public class ExamSubjectController {
                                     menberLevel = 1;
                                 }
                                 if (examSubject.getCodes().contains(menberLevel + "")) {
-                                    map.put("isFree", ExamSubject.IS_FREE);
                                     map.put("isBuy", 1);
                                 } else {
                                     //查找是否已经购买

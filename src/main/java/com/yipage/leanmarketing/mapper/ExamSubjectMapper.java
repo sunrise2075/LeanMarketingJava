@@ -13,7 +13,7 @@ public interface ExamSubjectMapper extends Mapper<ExamSubject> {
     List<ExamSubject> getRecommendExamSubject(@Param("subjectId") Integer subjectId, @Param("categoryId") Integer categoryId,
                                               @Param("limit") Integer limit);
 
-    Long recommendedExamsCount(Integer userId);
+    Long recommendedExamsCount(@Param("userId") Integer userId);
 
     List<ExamSubject> recommendedExams(@Param("startIndex") Integer startIndex,
                                        @Param("limit") Integer limit,
@@ -21,10 +21,12 @@ public interface ExamSubjectMapper extends Mapper<ExamSubject> {
 
     List<ExamSubject> getByLabels(String[] array);
 
-    Long getBySorceRecordCount();
+    Long getBySorceRecordCount(@Param("userId") Integer userId);
 
-    List<ExamSubject> getBySorceRecord(@Param("startIndex") Integer startIndex,
-                                       @Param("limit") Integer limit);
+    List<ExamSubject> getBySorceRecord(
+            @Param("startIndex") Integer startIndex,
+            @Param("limit") Integer limit,
+            @Param("userId") Integer userId);
 
     List<ExamSubject> getByLabel(String label);
 }

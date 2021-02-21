@@ -74,22 +74,20 @@ public class ExamSubjectServiceImpl extends AbstractService<ExamSubject> impleme
         if (count <= 0) {
 
             //按照考试记录进行排序
-            count = examSubjectMapper.getBySorceRecordCount();
-            examSubjectList = examSubjectMapper.getBySorceRecord(startIndex, limit);
+            count = examSubjectMapper.getBySorceRecordCount(userId);
+            examSubjectList = examSubjectMapper.getBySorceRecord(startIndex, limit, userId);
 
         } else {
             examSubjectList = examSubjectMapper.recommendedExams(startIndex, limit, userId);
             if (count > 0 && count < 10) {
                 Long count2;
-                count2 = examSubjectMapper.getBySorceRecordCount();
+                count2 = examSubjectMapper.getBySorceRecordCount(userId);
 
                 if (page == 1) {
-
                     //第一页
                     if (limit > count.intValue()) {
-
                         limit = limit - count.intValue();
-                        examSubjectList2 = examSubjectMapper.getBySorceRecord(startIndex, limit);
+                        examSubjectList2 = examSubjectMapper.getBySorceRecord(startIndex, limit, userId);
                         examSubjectList.addAll(examSubjectList2);
                         //去除重复元素
                         examSubjectList = removerList(examSubjectList);
@@ -97,7 +95,7 @@ public class ExamSubjectServiceImpl extends AbstractService<ExamSubject> impleme
                 } else {
                     //其他页
                     startIndex = (page - 1) * limit + count.intValue();
-                    examSubjectList = examSubjectMapper.getBySorceRecord(startIndex, limit);
+                    examSubjectList = examSubjectMapper.getBySorceRecord(startIndex, limit, userId);
                 }
                 //总条数
                 count = count + count2;
