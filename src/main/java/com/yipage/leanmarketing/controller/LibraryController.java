@@ -147,7 +147,9 @@ public class LibraryController {
                     @RequestParam(value = "isFree", required = false) Integer isFree,
                     @RequestParam(value = "isHide", required = false) Integer isHide,
                     @RequestParam(value = "openid", required = false) String openid,
-                    @RequestParam(value = "title", required = false) String title) {
+                    @RequestParam(value = "title", required = false) String title,
+                    @RequestParam(value = "isAppleDevice", required = false, defaultValue = "false") boolean isAppleDevice
+                    ) {
 
         PageHelper.startPage(page, limit);
         Condition condition = new Condition(Library.class);
@@ -160,8 +162,8 @@ public class LibraryController {
             criteria.andCondition("file_type = '" + fileType + "'");
         }
 
-        //未登录用户只查询免费文档
-        if (StringUtils.isEmpty(openid)){
+        //未登录用户或者是从苹果设备访问小程序，只查询免费文档
+        if (StringUtils.isEmpty(openid) || isAppleDevice){
             criteria.andCondition("is_free =" + 1);
         }else if (isFree != null) {
             criteria.andCondition("is_free =" + isFree);
@@ -397,11 +399,12 @@ public class LibraryController {
     public Map recommendedLibrarys(@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
                                    @RequestParam(value = "limit", required = false, defaultValue = "10") Integer limit,
                                    @RequestParam(value = "userId", required = false) Integer userId,
-                                   @RequestParam(value = "fileType", required = false) String fileType) {
+                                   @RequestParam(value = "fileType", required = false) String fileType,
+                                   @RequestParam(value = "isAppleDevice", required = false, defaultValue = "false") boolean isAppleDevice) {
 
         User user = userService.findById(userId);
         Integer isFree = null;
-        if (user.getIsBind() == User.IS_BIND_PHONE) {
+        if (user == null || user.getIsBind().equals(User.IS_BIND_PHONE) || isAppleDevice) {
             isFree = 1;
         }
 
