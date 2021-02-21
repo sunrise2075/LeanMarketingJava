@@ -59,55 +59,7 @@ public class ExamScoreController {
         resMap.put("examScore", score);
 
         List<ExamSubject> examSubjectList = (List<ExamSubject>) examSubjectService.recommendedExams(1, 2, user.getId(), false).get("data");
-
-//        List<ExamSubject> examSubjectList =  examSubjectService.getRecommendExamSubject(model.getSubjectId(),3);
         List<Map<String, Object>> list2 = packageExamSubject(examSubjectList, user);
-//        List<Map<String,Object>> list2 = new ArrayList<>();
-//        if(!CollectionUtils.isEmpty(examSubjectList)){
-//            for (ExamSubject examSubject : examSubjectList) {
-//                Map<String,Object> map = new HashMap<>();
-//                map.put("id",examSubject.getId());
-//                map.put("categoryId",examSubject.getCategoryId());
-//                map.put("name",examSubject.getName());
-//                map.put("createTime",examSubject.getCreateTime());
-//                map.put("examDuration",examSubject.getExamDuration());
-//                map.put("isFree",examSubject.getIsFree());
-//                map.put("codes",examSubject.getCodes());
-//                map.put("questionNum",examSubject.getQuestionNum());
-//                map.put("isHide",examSubject.getIsHide());
-//                map.put("price",examSubject.getPrice());
-//                map.put("updateTime",examSubject.getUpdateTime());
-//
-//                if(user!=null){
-//                    if(examSubject.getIsFree() == ExamSubject.IS_FREE){
-//                        map.put("isBuy",1);
-//                    }else{
-//                        if(StringUtils.isNotEmpty(examSubject.getCodes())){
-//
-//                            if(examSubject.getCodes().contains(user.getMemberLevel()+"")){
-//                                map.put("isFree",ExamSubject.IS_FREE);
-//                                map.put("isBuy",1);
-//                            }else{
-//                                //查找是否已经购买该视频
-//                                ExamOrder order = new ExamOrder();
-//                                order.setOpenid(score.getOpenid());
-//                                order.setPayState(VideoOrder.ISPAY);
-//                                order.setSubjectId(examSubject.getId());
-//                                List<ExamOrder> orderList = examOrderService.select(order);
-//                                if(!CollectionUtils.isEmpty(orderList)){
-//                                    map.put("isBuy",1);
-//                                }else{
-//                                    map.put("isBuy",2);
-//                                }
-//                            }
-//                        }
-//                    }
-//
-//                }
-//                list2.add(map);
-//            }
-//        }
-
         resMap.put("examSubjectList", list2);
         return ResultGenerator.genSuccessResult(resMap);
     }
