@@ -63,31 +63,31 @@ public class ExamSubjectServiceImpl extends AbstractService<ExamSubject> impleme
 //        return map;
 //    }
     @Override
-    public Map<String, Object> recommendedExams(Integer page, Integer limit, Integer userId) {
+    public Map<String, Object> recommendedExams(Integer page, Integer limit, Integer userId, boolean isAppleDevice) {
 
         Map<String, Object> map = new HashMap<>(4);
         int startIndex = (page - 1) * limit;
         List<ExamSubject> examSubjectList = null;
         List<ExamSubject> examSubjectList2 = null;
         //查询推荐数量
-        Long count = examSubjectMapper.recommendedExamsCount(userId);
+        Long count = examSubjectMapper.recommendedExamsCount(userId, isAppleDevice);
         if (count <= 0) {
 
             //按照考试记录进行排序
-            count = examSubjectMapper.getBySorceRecordCount(userId);
-            examSubjectList = examSubjectMapper.getBySorceRecord(startIndex, limit, userId);
+            count = examSubjectMapper.getBySorceRecordCount(userId, isAppleDevice);
+            examSubjectList = examSubjectMapper.getBySorceRecord(startIndex, limit, userId, isAppleDevice);
 
         } else {
-            examSubjectList = examSubjectMapper.recommendedExams(startIndex, limit, userId);
-            if (count > 0 && count < 10) {
+            examSubjectList = examSubjectMapper.recommendedExams(startIndex, limit, userId, isAppleDevice);
+            if (count < 10) {
                 Long count2;
-                count2 = examSubjectMapper.getBySorceRecordCount(userId);
+                count2 = examSubjectMapper.getBySorceRecordCount(userId, isAppleDevice);
 
                 if (page == 1) {
                     //第一页
                     if (limit > count.intValue()) {
                         limit = limit - count.intValue();
-                        examSubjectList2 = examSubjectMapper.getBySorceRecord(startIndex, limit, userId);
+                        examSubjectList2 = examSubjectMapper.getBySorceRecord(startIndex, limit, userId, isAppleDevice);
                         examSubjectList.addAll(examSubjectList2);
                         //去除重复元素
                         examSubjectList = removerList(examSubjectList);
@@ -95,7 +95,7 @@ public class ExamSubjectServiceImpl extends AbstractService<ExamSubject> impleme
                 } else {
                     //其他页
                     startIndex = (page - 1) * limit + count.intValue();
-                    examSubjectList = examSubjectMapper.getBySorceRecord(startIndex, limit, userId);
+                    examSubjectList = examSubjectMapper.getBySorceRecord(startIndex, limit, userId, isAppleDevice);
                 }
                 //总条数
                 count = count + count2;

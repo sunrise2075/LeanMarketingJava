@@ -73,7 +73,8 @@ public class ExamSubjectController {
                     @RequestParam(value = "categoryId", required = false) Integer categoryId,
                     @RequestParam(value = "isFree", required = false) Integer isFree,
                     @RequestParam(value = "isHide", required = false) Integer isHide,
-                    @RequestParam(value = "openid", required = false) String openid) {
+                    @RequestParam(value = "openid", required = false) String openid,
+                    @RequestParam(value = "isAppleDevice", required = false, defaultValue = "false") boolean isAppleDevice) {
 
         Map<String, Object> resMap = new HashMap<>();
         //查用户身份
@@ -94,8 +95,8 @@ public class ExamSubjectController {
             criteria.andCondition("is_hide =" + isHide);
         }
 
-        //用户没有绑定手机号码，只返回免费的考试
-        if (user == null || !user.getIsBind().equals(User.IS_BIND_PHONE)) {
+        //用户没有登录、没有绑定手机号码、用户从苹果设备访问小程序，只返回免费的考试
+        if (user == null || !user.getIsBind().equals(User.IS_BIND_PHONE) || isAppleDevice) {
             criteria.andCondition("is_free =" + 1);
         } else if (isFree != null) {
             criteria.andCondition("is_free =" + isFree);
@@ -131,9 +132,11 @@ public class ExamSubjectController {
     @GetMapping("recommendedExams")
     public Result recommendedExams(@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
                                    @RequestParam(value = "limit", required = false, defaultValue = "10") Integer limit,
-                                   @RequestParam(value = "userId", required = false) Integer userId) {
+                                   @RequestParam(value = "userId", required = false) Integer userId,
+                                   @RequestParam(value = "isAppleDevice", required = false, defaultValue = "false") boolean isAppleDevice
+    ) {
 
-        Map<String, Object> map = examSubjectService.recommendedExams(page, limit, userId);
+        Map<String, Object> map = examSubjectService.recommendedExams(page, limit, userId, isAppleDevice);
         packageExamSubject((List<ExamSubject>) map.get("data"), userService.findById(userId));
         List<Map<String, Object>> list = packageExamSubject((List<ExamSubject>) map.get("data"), userService.findById(userId));
         map.put("data", list);

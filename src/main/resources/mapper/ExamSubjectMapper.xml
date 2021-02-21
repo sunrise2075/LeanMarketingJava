@@ -49,7 +49,7 @@
         exam_subject es
         WHERE
         lr.type_id = es.id
-        <if test="userId == null">
+        <if test="userId == null or isAppleDevice==true">
         and es.is_free=1
         </if>
         AND lr.type = 3
@@ -63,6 +63,9 @@
         FROM label_record lr,
              exam_subject es
         WHERE lr.type_id = es.id
+        <if test="userId == null or isAppleDevice==true">
+            and es.is_free=1
+        </if>
           AND lr.type = 3
         GROUP BY es.id
         ORDER BY lr.count DESC
@@ -85,7 +88,7 @@
                  FROM exam_score es1,
                       exam_subject es2
                  where es1.subject_id = es2.id
-                 <if test="userId == null">
+                 <if test="userId == null or isAppleDevice==true">
                      and es2.is_free =1
                  </if>
                  GROUP BY es1.subject_id
@@ -98,7 +101,7 @@
         FROM exam_score es1,
              exam_subject es2
         where es1.subject_id = es2.id
-        <if test="userId == null">
+        <if test="userId == null or isAppleDevice==true">
             and es2.is_free = 1
         </if>
         GROUP BY es1.subject_id

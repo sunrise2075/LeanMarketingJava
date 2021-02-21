@@ -16,7 +16,7 @@ public interface ExamSubjectService extends Service<ExamSubject> {
 
     List<ExamSubject> getRecommendExamSubject(Integer subjectId, Integer limit);
 
-    Map<String, Object> recommendedExams(Integer page, Integer limit, Integer userId);
+    Map<String, Object> recommendedExams(Integer page, Integer limit, Integer userId, boolean isAppleDevice);
 
     Map getByLabels(String labels);
 

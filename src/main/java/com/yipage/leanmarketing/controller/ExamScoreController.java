@@ -58,7 +58,7 @@ public class ExamScoreController {
         Map<String, Object> resMap = new HashMap<>();
         resMap.put("examScore", score);
 
-        List<ExamSubject> examSubjectList = (List<ExamSubject>) examSubjectService.recommendedExams(1, 2, user.getId()).get("data");
+        List<ExamSubject> examSubjectList = (List<ExamSubject>) examSubjectService.recommendedExams(1, 2, user.getId(), false).get("data");
 
 //        List<ExamSubject> examSubjectList =  examSubjectService.getRecommendExamSubject(model.getSubjectId(),3);
         List<Map<String, Object>> list2 = packageExamSubject(examSubjectList, user);

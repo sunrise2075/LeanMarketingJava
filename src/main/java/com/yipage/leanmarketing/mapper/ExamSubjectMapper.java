@@ -13,20 +13,22 @@ public interface ExamSubjectMapper extends Mapper<ExamSubject> {
     List<ExamSubject> getRecommendExamSubject(@Param("subjectId") Integer subjectId, @Param("categoryId") Integer categoryId,
                                               @Param("limit") Integer limit);
 
-    Long recommendedExamsCount(@Param("userId") Integer userId);
+    Long recommendedExamsCount(@Param("userId") Integer userId,
+                               @Param("isAppleDevice") boolean isAppleDevice);
 
     List<ExamSubject> recommendedExams(@Param("startIndex") Integer startIndex,
                                        @Param("limit") Integer limit,
-                                       @Param("userId") Integer userId);
+                                       @Param("userId") Integer userId,
+                                       @Param("isAppleDevice") boolean isAppleDevice);
 
     List<ExamSubject> getByLabels(String[] array);
 
-    Long getBySorceRecordCount(@Param("userId") Integer userId);
+    Long getBySorceRecordCount(@Param("userId") Integer userId, @Param("isAppleDevice") boolean isAppleDevice);
 
     List<ExamSubject> getBySorceRecord(
             @Param("startIndex") Integer startIndex,
             @Param("limit") Integer limit,
-            @Param("userId") Integer userId);
+            @Param("userId") Integer userId, @Param("isAppleDevice") boolean isAppleDevice);
 
     List<ExamSubject> getByLabel(String label);
 }
