@@ -396,11 +396,11 @@ public class LibraryController {
      * 推荐文库(根据用户的标签记录)
      */
     @GetMapping("recommendedLibrarys")
-    public Map recommendedLibrarys(@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
-                                   @RequestParam(value = "limit", required = false, defaultValue = "10") Integer limit,
-                                   @RequestParam(value = "userId", required = false) Integer userId,
-                                   @RequestParam(value = "fileType", required = false) String fileType,
-                                   @RequestParam(value = "isAppleDevice", required = false, defaultValue = "false") boolean isAppleDevice) {
+    public Map recommendedLibraries(@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
+                                    @RequestParam(value = "limit", required = false, defaultValue = "10") Integer limit,
+                                    @RequestParam(value = "userId", required = false) Integer userId,
+                                    @RequestParam(value = "fileType", required = false) String fileType,
+                                    @RequestParam(value = "isAppleDevice", required = false, defaultValue = "false") boolean isAppleDevice) {
 
         User user = userService.findById(userId);
         Integer isFree = null;
