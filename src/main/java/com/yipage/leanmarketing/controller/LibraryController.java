@@ -395,7 +395,7 @@ public class LibraryController {
     /**
      * 推荐文库(根据用户的标签记录)
      */
-    @GetMapping("recommendedLibrarys")
+    @GetMapping("recommendedLibraries")
     public Map recommendedLibraries(@RequestParam(value = "page", required = false, defaultValue = "1") Integer page,
                                     @RequestParam(value = "limit", required = false, defaultValue = "10") Integer limit,
                                     @RequestParam(value = "userId", required = false) Integer userId,
