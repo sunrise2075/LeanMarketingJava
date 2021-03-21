@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.yipage</groupId>
 	<artifactId>lean-marketing</artifactId>
-	<version>0.0.2-RELEASE</version>
+	<version>0.0.4-RELEASE</version>
 	<packaging>war</packaging>
 	<name>lean-marketing</name>
 	<description>精益营销</description>

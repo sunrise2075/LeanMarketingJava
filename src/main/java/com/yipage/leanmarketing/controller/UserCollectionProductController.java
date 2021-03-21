@@ -13,6 +13,7 @@ import com.yipage.leanmarketing.service.ProductService;
 import com.yipage.leanmarketing.service.UserCollectionProductService;
 import com.yipage.leanmarketing.service.UserService;
 import com.yipage.leanmarketing.utils.MapUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,11 +39,14 @@ public class UserCollectionProductController {
 
         userCollectionProduct.setCreateTime(new Date());
         userCollectionProduct.setUpdateTime(new Date());
-        User user = userService.findBy("wxid", userCollectionProduct.getOpenid());
-        if (user != null) {
-            userCollectionProduct.setUserId(user.getId());
+        String openid = userCollectionProduct.getOpenid();
+        if (StringUtils.isNotEmpty(openid)) {
+            User user = userService.findBy("wxid", openid);
+            if (user != null) {
+                userCollectionProduct.setUserId(user.getId());
+            }
+            userCollectionProductService.save(userCollectionProduct);
         }
-        userCollectionProductService.save(userCollectionProduct);
         return ResultGenerator.genSuccessResult(userCollectionProduct);
     }
 

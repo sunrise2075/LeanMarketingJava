@@ -14,7 +14,10 @@ import tk.mybatis.mapper.entity.Condition;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by CodeGenerator on 2018/12/10.
@@ -321,66 +324,71 @@ public class VideoController {
                 map.put("evaluateNum", evaluateNum);
 
                 if (user != null) {
-                    if (video.getIsFree().equals(Video.IS_FREE)) {
-                        map.put("isBuy", 1);
-                    } else {
-                        //查看购买数量
-                        VideoOrder videoOrder = new VideoOrder();
-                        videoOrder.setVideoId(video.getId());
-                        videoOrder.setPayState(VideoOrder.ISPAY);
-                        Integer buyNum = videoOrderService.selectCount(videoOrder);
-                        map.put("buyNum", buyNum);
-
-                        if (StringUtils.isNotEmpty(video.getCodes())) {
-                            if (user != null) {
-                                int menberLevel = user.getMemberLevel();
-                                if (menberLevel == 1) {
-
-                                    //查找是否已经购买该视频
-                                    VideoOrder order = new VideoOrder();
-                                    order.setOpenid(user.getWxid());
-                                    order.setPayState(VideoOrder.ISPAY);
-                                    order.setVideoId(video.getId());
-                                    List<VideoOrder> orderList = videoOrderService.select(order);
-                                    if (!CollectionUtils.isEmpty(orderList)) {
-                                        map.put("isBuy", 1);
-                                    } else {
-                                        map.put("isBuy", 2);
-                                    }
-
-                                } else {
-
-                                    if (menberLevel == 10) {  //添加了一个经销商,前端页面只有0-9
-                                        menberLevel = 1;
-                                    }
-                                    if (video.getCodes().contains(menberLevel + "")) {
-                                        map.put("isBuy", 1);
-                                    } else {
-
-                                        //查找是否已经购买该视频
-                                        VideoOrder order = new VideoOrder();
-                                        order.setOpenid(user.getWxid());
-                                        order.setPayState(VideoOrder.ISPAY);
-                                        order.setVideoId(video.getId());
-                                        List<VideoOrder> orderList = videoOrderService.select(order);
-                                        if (!CollectionUtils.isEmpty(orderList)) {
-                                            map.put("isBuy", 1);
-                                        } else {
-                                            map.put("isBuy", 2);
-                                        }
-
-                                    }
-
-                                }
-
-                            }
-                        }
-                    }
+                    processUserPurchaseDisplay(user, video, map);
                 }
                 list2.add(map);
             }
         }
         return list2;
+    }
+
+    private void processUserPurchaseDisplay(User user, Video video, Map<String, Object> map) {
+        if (video.getIsFree().equals(Video.IS_FREE)) {
+            map.put("isBuy", 1);
+        } else {
+            //查看购买数量
+            VideoOrder videoOrder = new VideoOrder();
+            videoOrder.setVideoId(video.getId());
+            videoOrder.setPayState(VideoOrder.ISPAY);
+            Integer buyNum = videoOrderService.selectCount(videoOrder);
+            map.put("buyNum", buyNum);
+
+            if (StringUtils.isNotEmpty(video.getCodes())) {
+                if (user != null) {
+                    int menberLevel = user.getMemberLevel();
+                    if (menberLevel == 1) {
+
+                        //查找是否已经购买该视频
+                        VideoOrder order = new VideoOrder();
+                        order.setOpenid(user.getWxid());
+                        order.setPayState(VideoOrder.ISPAY);
+                        order.setVideoId(video.getId());
+                        List<VideoOrder> orderList = videoOrderService.select(order);
+                        if (!CollectionUtils.isEmpty(orderList)) {
+                            map.put("isBuy", 1);
+                        } else {
+                            map.put("isBuy", 2);
+                        }
+
+                    } else {
+
+                        if (menberLevel == 10) {  //添加了一个经销商,前端页面只有0-9
+                            menberLevel = 1;
+                        }
+                        if (video.getCodes().contains(menberLevel + "")) {
+                            map.put("isBuy", 1);
+                        } else {
+
+                            //查找是否已经购买该视频
+                            VideoOrder order = new VideoOrder();
+                            order.setOpenid(user.getWxid());
+                            order.setPayState(VideoOrder.ISPAY);
+                            order.setVideoId(video.getId());
+                            List<VideoOrder> orderList = videoOrderService.select(order);
+                            if (!CollectionUtils.isEmpty(orderList)) {
+                                map.put("isBuy", 1);
+                            } else {
+                                map.put("isBuy", 2);
+                            }
+
+                        }
+
+                    }
+
+                }
+            }
+        }
+
     }
 
     /**
@@ -438,15 +446,9 @@ public class VideoController {
         List<Map<String, Object>> list2 = packageVideo(freeVideoList, null);
         resMap.put("freeVideoList", list2);
 
-        List<Map<String, Object>> list3;
-        if (user != null && user.getIsBind().equals(User.IS_BIND_PHONE)) {
-            //精选收费视频
-            List<Video> chargeVideoList = videoService.findVideo(categoryId, Video.NO_FREE, Video.IS_SHOW, limit);
-            list3 = packageVideo(chargeVideoList, user);
-        } else {
-            list3 = Collections.emptyList();
-        }
-        resMap.put("chargeVideoList", list3);
+        //精选收费视频
+        List<Video> chargeVideoList = videoService.findVideo(categoryId, Video.NO_FREE, Video.IS_SHOW, limit);
+        resMap.put("chargeVideoList", packageVideo(chargeVideoList, user));
 
         return ResultGenerator.genSuccessResult(resMap);
     }

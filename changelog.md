@@ -42,8 +42,8 @@ b. 清理所有未知的 ssh key
 
 ## 5. 上传本地打包命令
 
-    scp ./target/lean-marketing-0.0.2-RELEASE.war root@47.107.61.119:/home/wwwroot/pc.leanmarketing.cn/java-leanMarketing
+    scp ./target/lean-marketing-0.0.3-RELEASE.war root@47.107.61.119:/home/wwwroot/pc.leanmarketing.cn/java-leanMarketing
 
 ## 6. 启动命令
 
-    nohup java -jar lean-marketing-0.0.2-RELEASE.war 1>/dev/null 2>&1 &
+    nohup java -jar lean-marketing-0.0.3-RELEASE.war 1>/dev/null 2>&1 &

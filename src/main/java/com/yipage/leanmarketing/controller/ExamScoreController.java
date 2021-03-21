@@ -43,7 +43,6 @@ public class ExamScoreController {
 
     @PostMapping("add")
     public Result add(@RequestBody ExamScore score) {
-
         User user = userService.findBy("wxid", score.getOpenid());
         if (user != null) {
             score.setUserName(user.getNickname());

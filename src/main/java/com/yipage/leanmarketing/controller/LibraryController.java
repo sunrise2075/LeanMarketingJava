@@ -177,7 +177,12 @@ public class LibraryController {
         List<Library> list = libraryService.findByCondition(condition);
         PageInfo pageInfo = new PageInfo(list);
         //封装
-        List<Map<String, Object>> list2 = packageLibrary(list, openid);
+
+        User user = null;
+        if (StringUtils.isNotEmpty(openid)){
+            user = userService.findBy("wxid", openid);
+        }
+        List<Map<String, Object>> list2 = packageLibrary(list, user);
         pageInfo.setList(list2);
         return MapUtil.PageResult(pageInfo);
     }
@@ -197,7 +202,11 @@ public class LibraryController {
         List<Library> list = libraryService.findByKeyWord(title, fileType, categoryId);
         PageInfo pageInfo = new PageInfo(list);
         //封装
-        List<Map<String, Object>> list2 = packageLibrary(list, openid);
+        User user = null;
+        if (StringUtils.isNotEmpty(openid)){
+            user = userService.findBy("wxid", openid);
+        }
+        List<Map<String, Object>> list2 = packageLibrary(list, user);
         pageInfo.setList(list2);
         return MapUtil.PageResult(pageInfo);
     }
@@ -280,15 +289,12 @@ public class LibraryController {
      * 封装商品信息
      *
      * @param list
+     * @param user
      * @return
      */
-    private List<Map<String, Object>> packageLibrary(List<Library> list, String openid) {
+    private List<Map<String, Object>> packageLibrary(List<Library> list, User user) {
 
         //查用户身份
-        User user = null;
-        if (openid != null) {
-            user = userService.findBy("wxid", openid);
-        }
         List<Map<String, Object>> list2 = new ArrayList<>();
         if (!CollectionUtils.isEmpty(list)) {
             for (Library library : list) {
@@ -328,7 +334,7 @@ public class LibraryController {
 
                                     //是否已经购买
                                     LibraryOrder libraryOrder = new LibraryOrder();
-                                    libraryOrder.setOpenid(openid);
+                                    libraryOrder.setOpenid(user.getWxid());
                                     libraryOrder.setLibraryId(library.getId());
                                     libraryOrder.setPayState(LibraryOrder.ISPAY);
                                     List<LibraryOrder> libraryOrders = libraryOrderService.select(libraryOrder);
@@ -349,7 +355,7 @@ public class LibraryController {
                                     } else {
                                         //是否已经购买
                                         LibraryOrder libraryOrder = new LibraryOrder();
-                                        libraryOrder.setOpenid(openid);
+                                        libraryOrder.setOpenid(user.getWxid());
                                         libraryOrder.setLibraryId(library.getId());
                                         libraryOrder.setPayState(LibraryOrder.ISPAY);
                                         List<LibraryOrder> libraryOrders = libraryOrderService.select(libraryOrder);
@@ -409,7 +415,8 @@ public class LibraryController {
         }
 
         Map<String, Object> map = libraryService.recommendedLibrarys(page, limit, userId, fileType, isFree);
-        List<Map<String, Object>> list = packageLibrary((List<Library>) map.get("data"), user.getWxid());
+        List<Library> data = (List<Library>) map.get("data");
+        List<Map<String, Object>> list = packageLibrary(data, user);
         map.put("data", list);
         return map;
     }
